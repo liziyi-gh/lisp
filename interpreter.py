@@ -13,6 +13,8 @@ standard_env = {
     'car': lambda x: x[0],
     'cdr': lambda x: x[1:],
     'cons': lambda x, y: [x, y],
+    'number?': lambda x: isinstance(x, (int, float, complex)),
+    'symbol?':lambda x: isinstance(x, str),
 }
 
 def apply():
