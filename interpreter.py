@@ -1,13 +1,6 @@
 import operator
-
-class Block():
-    def __init__(self):
-        self.exp = ''
-        self.child = []
-
-    def add_child(self, exp):
-        self.child.append(exp)
-
+from tool.block import Block
+from tool.parser import parse, parse_tokens
 
 def car(x):
     return x[0]
@@ -15,19 +8,31 @@ def car(x):
 def cdr(x):
     return x[1:]
 
-def is_number(x):
+class InternalException(Exception):
+    pass
+
+
+def to_number(x):
     try:
         return int(x)
-    except ValueError:
-        pass
+    except (ValueError, TypeError):
+        raise InternalException
     try:
         return float(x)
-    except ValueError:
-        pass
+    except (ValueError, TypeError):
+        raise InternalException
     try:
         return complex(x)
-    except:
-        pass
+    except (ValueError, TypeError):
+        raise InternalException
+
+def is_number(x):
+    try:
+        _ = to_number(x)
+        return True
+    except InternalException:
+        return False
+
 
 standard_env = {
     '+': operator.add,
@@ -41,71 +46,33 @@ standard_env = {
     'symbol?':lambda x: isinstance(x, str),
 }
 
-def apply(env, exp):
-    func = env[exp[0]]
+def apply(exp, env):
+    print(exp.child)
+    func = env[exp.child[0]]
     if func is standard_env['+']:
-        return func(eval(exp[1]), eval(exp[2]))
+        return func(eval(exp.child[1]), eval(exp.child[2]))
 
 
 def eval(exp, env=standard_env):
-    tmp = exp[1] if exp[0] == '(' else exp[0]
+    print('eval', exp)
+    tmp = ''
+    if isinstance(exp, Block):
+        tmp = exp.child[0]
+        if isinstance(tmp, Block):
+            return eval(tmp, env)
+    else:
+        tmp = exp[0]
     if env['number?'](tmp):
-        # TODO: float complex support
-        return int(tmp)
+        return to_number(tmp)
     if env['symbol?'](tmp):
         if hasattr(env[tmp], '__call__'):
-            return apply(env, exp[1:-1])
+            return apply(exp, env)
         else:
             return env(tmp)
 
-def find_next_brackets(tokens, begin)->int:
-    stack = 0
-    while begin<len(tokens):
-        if tokens[begin] == '(':
-            stack += 1
-        if tokens[begin] == ')':
-            stack -= 1
-            if stack == 0:
-                return begin
-        begin += 1
-    return -1
 
-
-def parse_tokens(tokens):
-    root = Block()
-    i = 0
-    j = 0
-    while(i<len(tokens)):
-        if tokens[i] == '(':
-            j = find_next_brackets(tokens, i)
-            root.exp = tokens[i:j+1]
-            root.add_child(parse_tokens(tokens[i+1:j]))
-            i = j
-        i = i+1
-    return root
-
-def parse(exp:str):
-    # TODO: exp has to be one line format now
-    tokens = []
-    tmp = ""
-    for i in range(len(exp)):
-        if exp[i] == '(':
-            tokens.append(exp[i])
-            tmp=''
-        elif exp[i] == ')':
-            if exp[i-1] != ')':
-                tokens.append(tmp)
-            tmp=''
-            tokens.append(')')
-        elif exp[i] == ' ':
-            tokens.append(tmp)
-            tmp = ''
-        else:
-            tmp += exp[i]
-    return tokens
-
-source = "(+ 1 (+ 2 1))"
+source = "(+ 1 (+ 2 (+ 3 4)))"
 tokens = parse(source)
-syntax_tree = parse_tokens(tokens)
-print(tokens)
-# print(eval(tokens))
+root = parse_tokens(tokens)
+result = eval(root)
+print(result)
