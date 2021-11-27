@@ -3,14 +3,13 @@ from tool.parser import parse, parse_tokens
 from tool.standard_enviorment import STD_ENV, to_number
 
 def apply(exp, env):
-    print(exp.child)
     func = env[exp.child[0]]
-    if func is STD_ENV['+']:
+    if func in [STD_ENV['+'], STD_ENV['-'], STD_ENV['*'], STD_ENV['/'],
+                STD_ENV['cons'], ]:
         return func(eval(exp.child[1]), eval(exp.child[2]))
 
 
 def eval(exp, env=STD_ENV):
-    print('eval', exp)
     tmp = ''
     if isinstance(exp, Block):
         tmp = exp.child[0]
@@ -27,7 +26,7 @@ def eval(exp, env=STD_ENV):
             return env(tmp)
 
 
-source = "(+ 1 (+ 2 (+ 3 4)))"
+source = " ( + (+ 1 2 )   ( + 3 4) )"
 tokens = parse(source)
 root = parse_tokens(tokens)
 result = eval(root)

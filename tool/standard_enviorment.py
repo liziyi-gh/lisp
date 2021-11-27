@@ -35,6 +35,8 @@ def is_number(x):
 STD_ENV = {
     '+': operator.add,
     '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv,
     # 'equal?': operator.eq,
     # 'eq?': operator.is_,
     'car': lambda x: x[0],

@@ -37,12 +37,13 @@ def parse(exp:str):
             tokens.append(exp[i])
             tmp=''
         elif exp[i] == ')':
-            if exp[i-1] != ')':
+            if tmp != '':
                 tokens.append(tmp)
             tmp=''
             tokens.append(')')
         elif exp[i] == ' ':
-            tokens.append(tmp)
+            if tmp != '':
+                tokens.append(tmp)
             tmp = ''
         else:
             tmp += exp[i]
