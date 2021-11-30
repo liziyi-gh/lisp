@@ -1,5 +1,7 @@
 import operator
 
+from tool.block import Block
+
 def car(x):
     return x[0]
 
@@ -31,6 +33,12 @@ def is_number(x):
     except InternalException:
         return False
 
+def define(exp:Block, env):
+    print('before')
+    name = exp.child[1]
+    print("in define", "name is", name)
+    env[name] = exp.child[2]
+    print(env)
 
 STD_ENV = {
     '+': operator.add,
@@ -43,5 +51,5 @@ STD_ENV = {
     'cdr': lambda x: x[1:],
     'cons': lambda x, y: [x, y],
     'number?': is_number,
-    'symbol?':lambda x: isinstance(x, str),
+    'symbol?':lambda x, y: x in y.keys(),
 }
