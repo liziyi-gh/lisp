@@ -1,6 +1,6 @@
 import operator
 
-from tool.block import Block
+from tool.block import Sentence
 
 def car(x):
     return x[0]
@@ -16,15 +16,13 @@ def to_number(x):
     try:
         return int(x)
     except (ValueError, TypeError):
-        raise InternalException
-    try:
-        return float(x)
-    except (ValueError, TypeError):
-        raise InternalException
-    try:
-        return complex(x)
-    except (ValueError, TypeError):
-        raise InternalException
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            try:
+                return complex(x)
+            except (ValueError, TypeError):
+                raise InternalException
 
 def is_number(x):
     try:
@@ -33,14 +31,13 @@ def is_number(x):
     except InternalException:
         return False
 
-def define(exp:Block, env):
-    print('before')
+def define(exp:Sentence, env):
     name = exp.child[1]
     print("in define", "name is", name)
     env[name] = exp.child[2]
-    print(env)
+    print(exp.child[2].child)
 
-STD_ENV = {
+TOP_ENV = {
     '+': operator.add,
     '-': operator.sub,
     '*': operator.mul,

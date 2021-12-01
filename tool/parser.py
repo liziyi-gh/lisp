@@ -1,4 +1,4 @@
-from tool.block import Block
+from tool.block import Sentence
 
 def find_next_brackets(tokens, begin)->int:
     stack = 0
@@ -13,7 +13,7 @@ def find_next_brackets(tokens, begin)->int:
     return -1
 
 def parse_tokens(tokens):
-    root = Block()
+    root = Sentence()
     i = 0
     j = 0
     while(i<len(tokens)):
