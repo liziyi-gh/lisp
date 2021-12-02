@@ -26,7 +26,7 @@ def eval(exp, env=TOP_ENV):
         if hasattr(env[tmp], '__call__'):
             return apply(exp, env)
         else:
-            return env(tmp)
+            return env[tmp]
 
 
 if __name__ == '__main__':
@@ -38,4 +38,5 @@ if __name__ == '__main__':
         tokens = parse(source)
         root = parse_tokens(tokens)
         result = eval(root, env)
-        print(result)
+        if result is not None:
+            print(result)

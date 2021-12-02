@@ -33,7 +33,11 @@ def is_number(x):
 
 def define(exp:Sentence, env):
     name = exp.child[1]
-    env[name] = exp.child[2]
+    value = exp.child[2]
+    if is_number(value):
+        env[name] = to_number(value)
+    else:
+        env[name] = value
 
 TOP_ENV = {
     '+': operator.add,
