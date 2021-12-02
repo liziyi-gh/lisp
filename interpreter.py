@@ -16,7 +16,7 @@ def eval(exp, env=TOP_ENV):
         if isinstance(tmp, Sentence):
             return eval(tmp, env)
     else:
-        tmp = exp[0]
+        tmp = exp
     if env['number?'](tmp):
         return to_number(tmp)
     if tmp == 'define':
@@ -24,17 +24,18 @@ def eval(exp, env=TOP_ENV):
         return
     if env['symbol?'](tmp, env):
         if hasattr(env[tmp], '__call__'):
-            print('applying')
             return apply(exp, env)
         else:
             return env(tmp)
 
 
-env = TOP_ENV
-
-while True:
-    source = input()
-    tokens = parse(source)
-    root = parse_tokens(tokens)
-    result = eval(root, env)
-    print(result)
+if __name__ == '__main__':
+    print("Lisp interpreter Version 0.01")
+    env = TOP_ENV
+    while True:
+        print("> ",end="")
+        source = input()
+        tokens = parse(source)
+        root = parse_tokens(tokens)
+        result = eval(root, env)
+        print(result)
