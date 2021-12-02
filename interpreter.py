@@ -1,3 +1,4 @@
+from unittest import result
 from tool.sentence import Sentence
 from tool.parser import parse, parse_tokens
 from tool.standard_enviorment import TOP_ENV, to_number, define
@@ -29,14 +30,18 @@ def eval(exp, env=TOP_ENV):
             return env[tmp]
 
 
+def eval_source(source, env=TOP_ENV):
+    tokens = parse(source)
+    sentences = parse_tokens(tokens)
+    result = eval(sentences, env)
+    return result
+
 if __name__ == '__main__':
     print("Lisp interpreter Version 0.01")
     env = TOP_ENV
     while True:
         print("> ",end="")
         source = input()
-        tokens = parse(source)
-        root = parse_tokens(tokens)
-        result = eval(root, env)
+        result = eval_source(source, env)
         if result is not None:
             print(result)
