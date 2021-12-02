@@ -30,11 +30,9 @@ def eval(exp, env=TOP_ENV):
             return env(tmp)
 
 
-# source = "((define a (lambda (x) x))(+ 1 (a 1)))"
-# source = "(define a (lambda (x) x))"
-source = "(+ (+ 1 3) (+ 1 3))"
-tokens = parse(source)
-print(tokens)
-root = parse_tokens(tokens)
-result = eval(root)
-print('result', result)
+while True:
+    source = input()
+    tokens = parse(source)
+    root = parse_tokens(tokens)
+    result = eval(root)
+    print(result)
