@@ -1,4 +1,4 @@
-from tool.block import Sentence
+from tool.sentence import Sentence
 from tool.parser import parse, parse_tokens
 from tool.standard_enviorment import TOP_ENV, to_number, define
 
@@ -30,9 +30,11 @@ def eval(exp, env=TOP_ENV):
             return env(tmp)
 
 
+env = TOP_ENV
+
 while True:
     source = input()
     tokens = parse(source)
     root = parse_tokens(tokens)
-    result = eval(root)
+    result = eval(root, env)
     print(result)

@@ -1,4 +1,4 @@
-from tool.block import Sentence
+from tool.sentence import Sentence
 
 def find_next_brackets(tokens, begin)->int:
     stack = 0

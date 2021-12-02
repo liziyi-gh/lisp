@@ -1,6 +1,6 @@
 import operator
 
-from tool.block import Sentence
+from tool.sentence import Sentence
 
 def car(x):
     return x[0]
