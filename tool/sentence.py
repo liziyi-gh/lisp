@@ -1,6 +1,6 @@
 class Sentence():
     def __init__(self):
-        self.child = []
+        self.tokens = []
 
     def add_child(self, exp):
-        self.child.append(exp)
+        self.tokens.append(exp)
