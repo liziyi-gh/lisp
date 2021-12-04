@@ -12,14 +12,13 @@ def find_next_brackets(tokens, begin)->int:
         begin += 1
     return -1
 
-def parse_tokens(tokens):
+def parse_tokens(tokens) -> Sentence:
     root = Sentence()
     i = 0
     j = 0
     while(i<len(tokens)):
         if tokens[i] == '(':
             j = find_next_brackets(tokens, i)
-            # root.exp = tokens[i:j+1]
             root.add_child(parse_tokens(tokens[i+1:j]))
             i = j
         else:
@@ -28,7 +27,7 @@ def parse_tokens(tokens):
     return root
 
 
-def parse(exp:str):
+def parse(exp:str) -> list:
     # TODO: exp has to be one line format now
     tokens = []
     tmp = ""

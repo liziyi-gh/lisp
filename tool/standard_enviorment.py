@@ -31,14 +31,33 @@ def is_number(x):
     except InternalException:
         return False
 
+def op_add(args:list, env):
+    ans = 0
+    for ele in args:
+        ans += ele
+
+    return ans
+
+def op_sub(args:list, env):
+    ans = args[0] - args[1]
+
+    return ans
+
+def op_mul(args:list, env):
+    ans = 1
+    for ele in args:
+        ans *= ele
+
+    return ans
+
 TOP_ENV = {
-    '+': operator.add,
-    '-': operator.sub,
-    '*': operator.mul,
-    '/': operator.truediv,
-    'equal?': operator.eq,
-    'eq?': operator.is_,
-    '=': operator.eq,
+    '+': op_add,
+    '-': lambda x, y: x[0] - x[1],
+    '*': op_mul,
+    '/': lambda x, y: x[0] / y[0],
+    'equal?': lambda x, y: x[0] == y[0],
+    'eq?': lambda x, y: x[0] is y[0],
+    '=': lambda x, y: x[0] == y[0],
     'car': lambda x: x[0],
     'cdr': lambda x: x[1:],
     'cons': lambda x, y: [x, y],

@@ -28,10 +28,11 @@ def apply_lambda(exp:Sentence, env):
 
 def apply(exp:Sentence, env):
     func = env[exp.tokens[0]]
-    if func in [TOP_ENV['+'], TOP_ENV['-'], TOP_ENV['*'], TOP_ENV['/'],
-                TOP_ENV['cons'], TOP_ENV['='], TOP_ENV['equal?'],
-                TOP_ENV['eq?'], ]:
-        return func(eval(exp.tokens[1], env), eval(exp.tokens[2], env))
+    len_args = len(exp.tokens) -1
+    args = []
+    for i in range(len_args):
+        args.append(eval(exp.tokens[i+1]))
+    return func(args, env)
 
 
 def eval(exp, env=TOP_ENV):
