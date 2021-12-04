@@ -14,14 +14,25 @@ class TestLambda(unittest.TestCase):
         # Then
         self.assertTrue(result == expect_result)
 
-    # def test_lambda_2(self):
-    #     # Given
-    #     eval_source("(define fact (lambda (x)  ))")
-    #     expect_result = 6
-    #     # When
-    #     result = eval_source("(fact 3)")
-    #     # Then
-    #     self.assertTrue(result == expect_result)
+    def test_lambda_2(self):
+        # Given
+        eval_source("(define self_+ (lambda (x y) (+ x y)))")
+        expect_result = 4
+        # When
+        result = eval_source("(self_+ 1 3)")
+        # Then
+        self.assertTrue(result == expect_result)
+
+    def test_lambda_3(self):
+        # Given
+        eval_source("(define a 3)")
+        eval_source("(define b 4)")
+        eval_source("(define self_+ (lambda (x y) (+ x y)))")
+        expect_result = 7
+        # When
+        result = eval_source("(self_+ a b)")
+        # Then
+        self.assertTrue(result == expect_result)
 
 
 if __name__=="__main__":
