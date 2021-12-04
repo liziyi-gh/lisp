@@ -94,7 +94,7 @@ def eval_source(source, env=TOP_ENV):
     return result
 
 if __name__ == '__main__':
-    print("Lisp interpreter Version 0.01")
+    print("Lisp interpreter Version 0.02")
     env = TOP_ENV
     while True:
         print("> ",end="")

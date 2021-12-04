@@ -1,6 +1,5 @@
 import sys
 import unittest
-from unittest import result
 sys.path.append("..")
 from interpreter import eval_source
 
@@ -48,8 +47,8 @@ class TestLambda(unittest.TestCase):
         # Given
         eval_source("(define fact (lambda (x) (if (= x 1) 1 (* x (fact (- x 1))))))")
         # When
-        expect_result = 5040
-        result = eval_source("(fact 7)")
+        expect_result = 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+        result = eval_source("(fact 100)")
         # Then
         self.assertTrue(result == expect_result)
 
