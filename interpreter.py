@@ -54,6 +54,29 @@ def eval(exp, env=TOP_ENV):
         define(exp, env)
         return
 
+    if tmp == 'cond':
+        i = 1
+        while eval(exp.tokens[i], env) != True:
+            i += 1
+        return eval(exp.tokens[i+1], env)
+
+    if tmp == 'if':
+        if eval(exp.tokens[1]) == True:
+            return eval(exp.tokens[2], env)
+        else:
+            return eval(exp.tokens[3], env)
+
+    if tmp == 'let':
+        # env = copy.deepcopy(env)
+        # return
+        pass
+
+    if tmp == 'begin':
+        result = None
+        for i in range(len(exp.tokens)-1):
+            result = eval(exp.tokens[i+1])
+        return result
+
     if env['symbol?'](tmp, env):
         if isinstance(env[tmp], Sentence) and env[tmp].tokens[0] == 'lambda':
             return apply_lambda(exp, env)
