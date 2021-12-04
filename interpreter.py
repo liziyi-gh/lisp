@@ -4,22 +4,19 @@ from tool.sentence import Sentence
 from tool.parser import parse, parse_tokens
 from tool.standard_enviorment import TOP_ENV, to_number, define
 
+def apply_lambda(exp:Sentence, env):
+    lambda_expression = env[exp.tokens[0]]
+    len_args = len(exp.tokens) - 1
+    for i in range(len_args):
+        env[lambda_expression.tokens[1].tokens[i]] = eval(exp.tokens[i+1])
+    return eval(lambda_expression.tokens[2], copy.deepcopy(env))
+
+
 def apply(exp:Sentence, env):
-    tmp = exp.tokens[0]
-    if isinstance(env[tmp], Sentence):
-        if env[tmp].tokens[0] == 'lambda':
-            lambda_expression = env[tmp]
-            len_args = len(exp.tokens) - 1
-            for i in range(len_args):
-                env[lambda_expression.tokens[1].tokens[i]] = eval(exp.tokens[i+1])
-            return eval(lambda_expression.tokens[2], copy.deepcopy(env))
-
-
-    else:
-        func = env[exp.tokens[0]]
-        if func in [TOP_ENV['+'], TOP_ENV['-'], TOP_ENV['*'], TOP_ENV['/'],
-                    TOP_ENV['cons'], ]:
-            return func(eval(exp.tokens[1], env), eval(exp.tokens[2], env))
+    func = env[exp.tokens[0]]
+    if func in [TOP_ENV['+'], TOP_ENV['-'], TOP_ENV['*'], TOP_ENV['/'],
+                TOP_ENV['cons'], ]:
+        return func(eval(exp.tokens[1], env), eval(exp.tokens[2], env))
 
 
 def eval(exp, env=TOP_ENV):
@@ -43,7 +40,7 @@ def eval(exp, env=TOP_ENV):
 
     if env['symbol?'](tmp, env):
         if isinstance(env[tmp], Sentence) and env[tmp].tokens[0] == 'lambda':
-            return apply(exp, env)
+            return apply_lambda(exp, env)
 
         if hasattr(env[tmp], '__call__'):
             return apply(exp, env)
