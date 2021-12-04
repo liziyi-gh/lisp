@@ -1,3 +1,4 @@
+import copy
 from unittest import result
 from tool.sentence import Sentence
 from tool.parser import parse, parse_tokens
@@ -6,9 +7,13 @@ from tool.standard_enviorment import TOP_ENV, to_number, define
 def apply(exp:Sentence, env):
     tmp = exp.tokens[0]
     if isinstance(env[tmp], Sentence):
-        if env[tmp].child[0] == 'lambda':
-            args = env[tmp].child[1].child
-            len_args = len(args)
+        if env[tmp].tokens[0] == 'lambda':
+            lambda_expression = env[tmp]
+            len_args = len(exp.tokens) - 1
+            for i in range(len_args):
+                env[lambda_expression.tokens[1].tokens[i]] = eval(exp.tokens[i+1])
+            return eval(lambda_expression.tokens[2], copy.deepcopy(env))
+
 
     else:
         func = env[exp.tokens[0]]
@@ -20,7 +25,10 @@ def apply(exp:Sentence, env):
 def eval(exp, env=TOP_ENV):
     tmp = None
     if isinstance(exp, Sentence):
-        tmp = exp.tokens[0]
+        if len(exp.tokens) > 0:
+            tmp = exp.tokens[0]
+        else:
+            return None
         if isinstance(tmp, Sentence):
             return eval(tmp, env)
     else:
@@ -34,8 +42,8 @@ def eval(exp, env=TOP_ENV):
         return
 
     if env['symbol?'](tmp, env):
-        if isinstance(env[tmp], Sentence) and env[tmp].child[0] == 'lambda':
-            apply(exp, env)
+        if isinstance(env[tmp], Sentence) and env[tmp].tokens[0] == 'lambda':
+            return apply(exp, env)
 
         if hasattr(env[tmp], '__call__'):
             return apply(exp, env)
