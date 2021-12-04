@@ -2,7 +2,21 @@ import copy
 from unittest import result
 from tool.sentence import Sentence
 from tool.parser import parse, parse_tokens
-from tool.standard_enviorment import TOP_ENV, to_number, define
+from tool.standard_enviorment import TOP_ENV, is_number, to_number, is_number
+
+def define(exp:Sentence, env):
+    name = exp.tokens[1]
+    value = exp.tokens[2]
+    if isinstance(value, Sentence):
+        if value.tokens[0] == 'lambda':
+            env[name] = value
+        else:
+            env[name] = eval(value, env)
+        return
+    if is_number(value):
+        env[name] = to_number(value)
+        return
+
 
 def apply_lambda(exp:Sentence, env):
     lambda_expression = env[exp.tokens[0]]

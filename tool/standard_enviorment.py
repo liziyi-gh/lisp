@@ -31,16 +31,6 @@ def is_number(x):
     except InternalException:
         return False
 
-def define(exp:Sentence, env):
-    name = exp.tokens[1]
-    value = exp.tokens[2]
-    if isinstance(value, Sentence):
-        env[name] = value
-        return
-    if is_number(value):
-        env[name] = to_number(value)
-        return
-
 TOP_ENV = {
     '+': operator.add,
     '-': operator.sub,
