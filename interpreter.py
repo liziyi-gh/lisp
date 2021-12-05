@@ -5,7 +5,7 @@ from tool.parser import tokenize, parse_tokens
 
 def cdr(x:list, y):
     if len(x[0].tokens) == 2:
-        return x[0].tokens[1]
+        return x[0][1]
     else:
         return x[0].tokens[1:]
 
@@ -52,10 +52,10 @@ def op_mul(args:list, env):
     return ans
 
 def op_if(exp:Sentence, env):
-    if eval(exp.tokens[1], env) == True:
-        return eval(exp.tokens[2], env)
+    if eval(exp[1], env) == True:
+        return eval(exp[2], env)
     else:
-        return eval(exp.tokens[3], env)
+        return eval(exp[3], env)
 
 TOP_ENV = {
     '+': op_add,
@@ -65,7 +65,7 @@ TOP_ENV = {
     'equal?': lambda x, y: x[0] == x[1],
     'eq?': lambda x, y: x[0] is x[1],
     '=': lambda x, y: x[0] == x[1],
-    'car': lambda x, y: x[0].tokens[0],
+    'car': lambda x, y: x[0][0],
     'cdr': cdr,
     'cons': lambda x, y: Sentence([x[0], x[1]]),
     'number?': is_number,
@@ -74,10 +74,10 @@ TOP_ENV = {
 }
 
 def define(exp:Sentence, env):
-    name = exp.tokens[1]
-    value = exp.tokens[2]
+    name = exp[1]
+    value = exp[2]
     if isinstance(value, Sentence):
-        if value.tokens[0] == 'lambda':
+        if value[0] == 'lambda':
             env[name] = value
         else:
             env[name] = eval(value, env)
@@ -88,21 +88,21 @@ def define(exp:Sentence, env):
 
 
 def apply_lambda(exp:Sentence, env):
-    lam_exp = env[exp.tokens[0]]
-    formal_parameters = lam_exp.tokens[1].tokens
-    lam_body = lam_exp.tokens[2]
+    lam_exp = env[exp[0]]
+    formal_parameters = lam_exp[1].tokens
+    lam_body = lam_exp[2]
     env = copy.deepcopy(env)
     for i in range(len(formal_parameters)):
-        env[formal_parameters[i]] = eval(exp.tokens[i+1], env)
+        env[formal_parameters[i]] = eval(exp[i+1], env)
     return eval(lam_body, env)
 
 
 def apply(exp:Sentence, env):
-    func = env[exp.tokens[0]]
+    func = env[exp[0]]
     len_args = len(exp.tokens) -1
     args = []
     for i in range(len_args):
-        args.append(eval(exp.tokens[i+1], env))
+        args.append(eval(exp[i+1], env))
     return func(args, env)
 
 
@@ -110,7 +110,7 @@ def eval(exp, env=TOP_ENV):
     tmp = None
     if isinstance(exp, Sentence):
         if len(exp.tokens) > 0:
-            tmp = exp.tokens[0]
+            tmp = exp[0]
         else:
             return None
         if isinstance(tmp, Sentence):
@@ -127,9 +127,9 @@ def eval(exp, env=TOP_ENV):
 
     if tmp == 'cond':
         i = 1
-        while eval(exp.tokens[i], env) != True:
+        while eval(exp[i], env) != True:
             i += 1
-        return eval(exp.tokens[i+1], env)
+        return eval(exp[i+1], env)
 
     if tmp == 'let':
         # env = copy.deepcopy(env)
@@ -142,12 +142,12 @@ def eval(exp, env=TOP_ENV):
     if tmp == 'begin':
         result = None
         for i in range(len(exp.tokens)-1):
-            result = eval(exp.tokens[i+1])
+            result = eval(exp[i+1])
         return result
 
     if env['symbol?'](tmp, env):
         # TODO: if tmp is a function then return itself
-        if isinstance(env[tmp], Sentence) and env[tmp].tokens[0] == 'lambda':
+        if isinstance(env[tmp], Sentence) and env[tmp][0] == 'lambda':
             return apply_lambda(exp, env)
 
         if hasattr(env[tmp], '__call__'):

@@ -78,5 +78,23 @@ class TestAdd(unittest.TestCase):
         expect_result = 0
         self.assertTrue(result == expect_result)
 
+    def test_cond_1(self):
+        # Given
+        source = "(cond (= 1 0) 2 (= 1 1) (+ 13 -13))"
+        # When
+        result = eval_source(source)
+        # Then
+        expect_result = 0
+        self.assertTrue(result == expect_result)
+
+    def test_begin_1(self):
+        # Given
+        source = "(begin (+ 11 3) (- 22 22))"
+        # When
+        result = eval_source(source)
+        # Then
+        expect_result = 0
+        self.assertTrue(result == expect_result)
+
 if __name__=="__main__":
     unittest.main()

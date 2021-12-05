@@ -2,6 +2,9 @@ class Sentence():
     def __init__(self, t):
         self.tokens = t
 
+    def __getitem__(self, idx):
+        return self.tokens[idx]
+
     def __str__(self):
         tmp = '('
         for i in range(len(self.tokens)):
