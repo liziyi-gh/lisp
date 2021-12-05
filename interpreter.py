@@ -1,7 +1,7 @@
 import copy
 from unittest import result
 from tool.sentence import Sentence
-from tool.parser import parse, parse_tokens
+from tool.parser import tokenize, parse_tokens
 from tool.standard_enviorment import TOP_ENV, is_number, to_number, is_number
 
 def define(exp:Sentence, env):
@@ -88,7 +88,7 @@ def eval(exp, env=TOP_ENV):
 
 
 def eval_source(source, env=TOP_ENV):
-    tokens = parse(source)
+    tokens = tokenize(source)
     sentences = parse_tokens(tokens)
     result = eval(sentences, env)
     return result

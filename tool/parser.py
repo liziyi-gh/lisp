@@ -19,15 +19,15 @@ def parse_tokens(tokens) -> Sentence:
     while(i<len(tokens)):
         if tokens[i] == '(':
             j = find_next_brackets(tokens, i)
-            root.add_child(parse_tokens(tokens[i+1:j]))
+            root.add_token(parse_tokens(tokens[i+1:j]))
             i = j
         else:
-            root.add_child(tokens[i])
+            root.add_token(tokens[i])
         i = i+1
     return root
 
 
-def parse(exp:str) -> list:
+def tokenize(exp:str) -> list:
     # TODO: exp has to be one line format now
     tokens = []
     tmp = ""

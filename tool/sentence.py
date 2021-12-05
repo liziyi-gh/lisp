@@ -10,5 +10,5 @@ class Sentence():
             tmp += str(self.tokens[i])
         return tmp
 
-    def add_child(self, exp):
+    def add_token(self, exp):
         self.tokens.append(exp)
