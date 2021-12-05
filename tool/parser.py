@@ -13,7 +13,7 @@ def find_next_brackets(tokens, begin)->int:
     return -1
 
 def parse_tokens(tokens) -> Sentence:
-    root = Sentence()
+    root = Sentence([])
     i = 0
     j = 0
     while(i<len(tokens)):

@@ -1,6 +1,6 @@
 class Sentence():
-    def __init__(self):
-        self.tokens = []
+    def __init__(self, t):
+        self.tokens = t
 
     def __str__(self):
         tmp = ''

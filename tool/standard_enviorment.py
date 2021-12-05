@@ -1,12 +1,10 @@
-import operator
-
 from tool.sentence import Sentence
 
-def car(x):
-    return x[0]
-
-def cdr(x):
-    return x[1:]
+def cdr(x:list, y):
+    if len(x[0].tokens) == 2:
+        return x[0].tokens[1]
+    else:
+        return x[0].tokens[1:]
 
 class InternalException(Exception):
     pass
@@ -58,9 +56,9 @@ TOP_ENV = {
     'equal?': lambda x, y: x[0] == x[1],
     'eq?': lambda x, y: x[0] is x[1],
     '=': lambda x, y: x[0] == x[1],
-    'car': lambda x: x[0],
-    'cdr': lambda x: x[1:],
-    'cons': lambda x, y: [x, y],
+    'car': lambda x, y: x[0].tokens[0],
+    'cdr': cdr,
+    'cons': lambda x, y: Sentence([x[0], x[1]]),
     'number?': is_number,
     'symbol?':lambda x, y: x in y.keys(),
 }
