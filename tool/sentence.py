@@ -3,12 +3,12 @@ class Sentence():
         self.tokens = t
 
     def __str__(self):
-        tmp = ''
+        tmp = '('
         for i in range(len(self.tokens)):
-            if isinstance(self.tokens[i], Sentence):
-                tmp += str(self.tokens[i])
             tmp += str(self.tokens[i])
-        return tmp
+            if i != len(self.tokens)-1:
+                tmp += ' '
+        return tmp + ')'
 
     def add_token(self, exp):
         self.tokens.append(exp)

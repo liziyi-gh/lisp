@@ -2,7 +2,76 @@ import copy
 from unittest import result
 from tool.sentence import Sentence
 from tool.parser import tokenize, parse_tokens
-from tool.standard_enviorment import TOP_ENV, is_number, to_number, is_number
+
+def cdr(x:list, y):
+    if len(x[0].tokens) == 2:
+        return x[0].tokens[1]
+    else:
+        return x[0].tokens[1:]
+
+class InternalException(Exception):
+    pass
+
+
+def to_number(x):
+    try:
+        return int(x)
+    except (ValueError, TypeError):
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            try:
+                return complex(x)
+            except (ValueError, TypeError):
+                raise InternalException
+
+def is_number(x):
+    try:
+        _ = to_number(x)
+        return True
+    except InternalException:
+        return False
+
+def op_add(args:list, env):
+    ans = 0
+    for ele in args:
+        ans += ele
+
+    return ans
+
+def op_sub(args:list, env):
+    ans = args[0] - args[1]
+
+    return ans
+
+def op_mul(args:list, env):
+    ans = 1
+    for ele in args:
+        ans *= ele
+
+    return ans
+
+def op_if(exp:Sentence, env):
+    if eval(exp.tokens[1], env) == True:
+        return eval(exp.tokens[2], env)
+    else:
+        return eval(exp.tokens[3], env)
+
+TOP_ENV = {
+    '+': op_add,
+    '-': op_sub,
+    '*': op_mul,
+    '/': lambda x, y: x[0] / x[1],
+    'equal?': lambda x, y: x[0] == x[1],
+    'eq?': lambda x, y: x[0] is x[1],
+    '=': lambda x, y: x[0] == x[1],
+    'car': lambda x, y: x[0].tokens[0],
+    'cdr': cdr,
+    'cons': lambda x, y: Sentence([x[0], x[1]]),
+    'number?': is_number,
+    'symbol?':lambda x, y: x in y.keys(),
+    'if': op_if,
+}
 
 def define(exp:Sentence, env):
     name = exp.tokens[1]
@@ -19,11 +88,13 @@ def define(exp:Sentence, env):
 
 
 def apply_lambda(exp:Sentence, env):
-    lambda_expression = env[exp.tokens[0]]
-    len_args = len(exp.tokens) - 1
-    for i in range(len_args):
-        env[lambda_expression.tokens[1].tokens[i]] = eval(exp.tokens[i+1])
-    return eval(lambda_expression.tokens[2], copy.deepcopy(env))
+    lam_exp = env[exp.tokens[0]]
+    formal_parameters = lam_exp.tokens[1].tokens
+    lam_body = lam_exp.tokens[2]
+    env = copy.deepcopy(env)
+    for i in range(len(formal_parameters)):
+        env[formal_parameters[i]] = eval(exp.tokens[i+1], env)
+    return eval(lam_body, env)
 
 
 def apply(exp:Sentence, env):
@@ -31,7 +102,7 @@ def apply(exp:Sentence, env):
     len_args = len(exp.tokens) -1
     args = []
     for i in range(len_args):
-        args.append(eval(exp.tokens[i+1]))
+        args.append(eval(exp.tokens[i+1], env))
     return func(args, env)
 
 
@@ -60,16 +131,13 @@ def eval(exp, env=TOP_ENV):
             i += 1
         return eval(exp.tokens[i+1], env)
 
-    if tmp == 'if':
-        if eval(exp.tokens[1]) == True:
-            return eval(exp.tokens[2], env)
-        else:
-            return eval(exp.tokens[3], env)
-
     if tmp == 'let':
         # env = copy.deepcopy(env)
         # return
         pass
+
+    if tmp == 'if':
+        return op_if(exp, env)
 
     if tmp == 'begin':
         result = None
@@ -78,6 +146,7 @@ def eval(exp, env=TOP_ENV):
         return result
 
     if env['symbol?'](tmp, env):
+        # TODO: if tmp is a function then return itself
         if isinstance(env[tmp], Sentence) and env[tmp].tokens[0] == 'lambda':
             return apply_lambda(exp, env)
 

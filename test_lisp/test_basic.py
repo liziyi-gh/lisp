@@ -60,5 +60,23 @@ class TestAdd(unittest.TestCase):
         # Then
         self.assertTrue(result == expect_result)
 
+    def test_if_1(self):
+        # Given
+        source = "(if (= (if (= 1 2) 1 2) 2) 1)"
+        # When
+        result = eval_source(source)
+        # Then
+        expect_result = 1
+        self.assertTrue(result == expect_result)
+
+    def test_if_2(self):
+        # Given
+        source = "(if (= (if (= 1 2) 1 2) 1) 1 0)"
+        # When
+        result = eval_source(source)
+        # Then
+        expect_result = 0
+        self.assertTrue(result == expect_result)
+
 if __name__=="__main__":
     unittest.main()
