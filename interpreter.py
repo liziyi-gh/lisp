@@ -1,4 +1,5 @@
 import copy
+from typing import Union
 from unittest import result
 from tool.sentence import Sentence
 from tool.parser import tokenize, parse_tokens
@@ -13,7 +14,7 @@ class InternalException(Exception):
     pass
 
 
-def to_number(x):
+def to_number(x) -> Union[int, float, complex]:
     try:
         return int(x)
     except (ValueError, TypeError):
@@ -25,21 +26,21 @@ def to_number(x):
             except (ValueError, TypeError):
                 raise InternalException
 
-def is_number(x):
+def is_number(x) -> bool:
     try:
         _ = to_number(x)
         return True
     except InternalException:
         return False
 
-def op_add(args:list, env):
+def op_add(args:list, env) -> Union[int, float, complex]:
     ans = 0
     for ele in args:
         ans += ele
 
     return ans
 
-def op_sub(args:list, env):
+def op_sub(args:list, env) -> Union[int, float, complex]:
     ans = args[0] - args[1]
 
     return ans
@@ -73,7 +74,7 @@ TOP_ENV = {
     'if': op_if,
 }
 
-def define(exp:Sentence, env):
+def define(exp:Sentence, env) -> None:
     name = exp[1]
     value = exp[2]
     if isinstance(value, Sentence):
