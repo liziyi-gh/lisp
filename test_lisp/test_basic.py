@@ -96,5 +96,25 @@ class TestAdd(unittest.TestCase):
         expect_result = 0
         self.assertTrue(result == expect_result)
 
+    def test_basic_list_1(self):
+        # Given
+        source = "(list 1 2 3)"
+        # When
+        result = eval_source(source)
+        # Then
+        self.assertTrue(result[0] == 1)
+        self.assertTrue(result[1] == 2)
+        self.assertTrue(result[2] == 3)
+
+    def test_basic_list_2(self):
+        # Given
+        source = "(list 1 2 (+ 1 2))"
+        # When
+        result = eval_source(source)
+        # Then
+        self.assertTrue(result[0] == 1)
+        self.assertTrue(result[1] == 2)
+        self.assertTrue(result[2] == 3)
+
 if __name__=="__main__":
     unittest.main()

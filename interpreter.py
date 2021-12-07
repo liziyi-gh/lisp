@@ -58,6 +58,9 @@ def op_if(exp:Sentence, env):
     else:
         return eval(exp[3], env)
 
+def op_list(args:list, env):
+    return Sentence(args)
+
 TOP_ENV = {
     '+': op_add,
     '-': op_sub,
@@ -72,6 +75,7 @@ TOP_ENV = {
     'number?': is_number,
     'symbol?':lambda x, y: x in y.keys(),
     'if': op_if,
+    'list': op_list,
 }
 
 def define(exp:Sentence, env) -> None:
