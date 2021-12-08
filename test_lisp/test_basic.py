@@ -116,5 +116,14 @@ class TestAdd(unittest.TestCase):
         self.assertTrue(result[1] == 2)
         self.assertTrue(result[2] == 3)
 
+    def test_basic_comma_1(self):
+        # Given
+        source = "(list 'abc 'e)"
+        # When
+        result = eval_source(source)
+        # Then
+        self.assertTrue(result[0] == "abc")
+        self.assertTrue(result[1] == "e")
+
 if __name__=="__main__":
     unittest.main()

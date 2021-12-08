@@ -150,6 +150,9 @@ def eval(exp, env=TOP_ENV):
             result = eval(exp[i+1])
         return result
 
+    if tmp[0] == '\'':
+        return tmp[1:]
+
     if env['symbol?'](tmp, env):
         # TODO: if tmp is a function then return itself
         if isinstance(env[tmp], Sentence) and env[tmp][0] == 'lambda':
@@ -157,8 +160,8 @@ def eval(exp, env=TOP_ENV):
 
         if hasattr(env[tmp], '__call__'):
             return apply(exp, env)
-        else:
-            return env[tmp]
+
+        return env[tmp]
 
 
 def eval_source(source, env=TOP_ENV):
