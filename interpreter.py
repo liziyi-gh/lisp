@@ -1,14 +1,14 @@
 import copy
-from typing import Union
+from typing import Dict, Union
 from unittest import result
 from tool.sentence import Sentence
 from tool.parser import tokenize, parse_tokens
 
 def cdr(x:list, y):
-    if len(x[0].tokens) == 2:
+    if len(x[0]) == 2:
         return x[0][1]
     else:
-        return x[0].tokens[1:]
+        return x[0][1:]
 
 class InternalException(Exception):
     pass
@@ -92,9 +92,28 @@ def define(exp:Sentence, env) -> None:
         return
 
 
+def define_syntax(exp:Sentence, env) -> None:
+    name = exp[1]
+    systax_rules = exp[2]
+    len_rules = len(systax_rules) - 2
+    value = {}
+    # ownership
+    for i in range(len_rules):
+        tmp_rule = systax_rules[i+2]
+        args_num = len(tmp_rule[0])-1
+        tmp_args = tmp_rule[0]
+        tmp_args.tokens.pop(0)
+        value[args_num] = Sentence(['lambda', tmp_args, tmp_rule[1]])
+    env[name] = value
+
+
 def apply_lambda(exp:Sentence, env):
-    lam_exp = env[exp[0]]
-    formal_parameters = lam_exp[1].tokens
+    if isinstance(exp[0], Sentence) and exp[0][0] == 'lambda':
+        lam_exp = exp[0]
+        pass
+    else:
+        lam_exp = env[exp[0]]
+    formal_parameters = lam_exp[1]
     lam_body = lam_exp[2]
     env = copy.deepcopy(env)
     for i in range(len(formal_parameters)):
@@ -104,7 +123,7 @@ def apply_lambda(exp:Sentence, env):
 
 def apply(exp:Sentence, env):
     func = env[exp[0]]
-    len_args = len(exp.tokens) -1
+    len_args = len(exp) -1
     args = []
     for i in range(len_args):
         args.append(eval(exp[i+1], env))
@@ -114,11 +133,13 @@ def apply(exp:Sentence, env):
 def eval(exp, env=TOP_ENV):
     tmp = None
     if isinstance(exp, Sentence):
-        if len(exp.tokens) > 0:
+        if len(exp) > 0:
             tmp = exp[0]
         else:
             return None
         if isinstance(tmp, Sentence):
+            if tmp[0] == 'lambda':
+                return apply_lambda(exp, env)
             return eval(tmp, env)
     else:
         tmp = exp
@@ -146,7 +167,7 @@ def eval(exp, env=TOP_ENV):
 
     if tmp == 'begin':
         result = None
-        for i in range(len(exp.tokens)-1):
+        for i in range(len(exp)-1):
             result = eval(exp[i+1])
         return result
 
@@ -155,13 +176,18 @@ def eval(exp, env=TOP_ENV):
 
     if env['symbol?'](tmp, env):
         # TODO: if tmp is a function then return itself
-        if isinstance(env[tmp], Sentence) and env[tmp][0] == 'lambda':
+        tmp = env[tmp]
+        if isinstance(tmp, Sentence) and tmp[0] == 'lambda':
             return apply_lambda(exp, env)
 
-        if hasattr(env[tmp], '__call__'):
+        if isinstance(tmp, Dict):
+            args_num = len(tmp)-1
+            return apply_lambda(tmp[args_num], env)
+
+        if hasattr(tmp, '__call__'):
             return apply(exp, env)
 
-        return env[tmp]
+        return tmp
 
 
 def eval_source(source, env=TOP_ENV):

@@ -13,5 +13,8 @@ class Sentence():
                 tmp += ' '
         return tmp + ')'
 
+    def __len__(self):
+        return len(self.tokens)
+
     def add_token(self, exp):
         self.tokens.append(exp)
