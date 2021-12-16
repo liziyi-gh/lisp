@@ -70,6 +70,17 @@ class TestLambda(unittest.TestCase):
         # Then
         self.assertTrue(result == expect_result)
 
+    def test_y_combinator(self):
+        # Given
+        eval_source("(define y-combinator (lambda (f) ((lambda (u) (u u)) (lambda (x) (f (lambda args (apply (x x) args)))))))")
+        # When
+        result = eval_source("((y-combinator (lambda (fab) (lambda (n) (if (zero? n) 1 (* n (fab (- n 1))))))) 3)")
+        expect_result = 6
+        # Then
+        print('result is ', result)
+        # https://zh.wikipedia.org/wiki/%E4%B8%8D%E5%8A%A8%E7%82%B9%E7%BB%84%E5%90%88%E5%AD%90
+        self.assertTrue(result == expect_result)
+
 
 if __name__=="__main__":
     unittest.main()
