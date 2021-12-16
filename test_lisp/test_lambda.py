@@ -43,6 +43,15 @@ class TestLambda(unittest.TestCase):
         # Then
         self.assertTrue(result == expect_result)
 
+    # def test_lambda_5(self):
+    #     # Given
+    #     source = "((lambda (x ...) x) 'iloveyy)"
+    #     # When
+    #     result = eval_source(source)
+    #     expect_result = 'iloveyy'
+    #     # Then
+    #     self.assertTrue(result == expect_result)
+
     def test_recursive_1(self):
         # Given
         eval_source("(define accu (lambda (x) (if (= x 1) 1 (+ x (accu (- x 1))))))")
