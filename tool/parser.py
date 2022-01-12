@@ -16,6 +16,9 @@ def parse_tokens(tokens) -> Sentence:
     root = Sentence([])
     i = 0
     j = 0
+    if len(tokens)==1:
+        return Sentence(tokens)
+
     while(i<len(tokens)):
         if tokens[i] == '(':
             j = find_next_brackets(tokens, i)
@@ -24,6 +27,7 @@ def parse_tokens(tokens) -> Sentence:
         else:
             root.add_token(tokens[i])
         i = i+1
+
     return root
 
 
@@ -46,4 +50,6 @@ def tokenize(exp:str) -> list:
             tmp = ''
         else:
             tmp += exp[i]
+    if tmp!='':
+        tokens.append(tmp)
     return tokens

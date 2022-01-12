@@ -1,16 +1,54 @@
 import copy
-from typing import Dict, Union
-from unittest import result
+from functools import reduce
+from typing import Union, Any
 from tool.sentence import Sentence
 from tool.parser import tokenize, parse_tokens
 
-def cdr(x:list, y):
-    if len(x[0]) == 2:
-        return x[0][1]
-    else:
-        return x[0][1:]
 
-class InternalException(Exception):
+Lisp_version = 0.03
+
+class lispLambdaFuntion():
+    def __init__(self, code:Sentence) -> None:
+        self.code = code
+        self.formal_parameters = code[1]
+        self.parameter_num = len(self.formal_parameters)
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        env = copy.deepcopy(args[1])
+        parameters = args[0]
+        len_parameters = len(parameters)
+        if len_parameters == 0:
+            return self
+
+        if len_parameters > self.parameter_num:
+            # TODO:
+            print("too many args")
+
+        if len_parameters < self.parameter_num:
+            closure_env = {}
+            i = 0
+            new_code = copy.deepcopy(self.code)
+            for para in parameters[1:1+len_parameters]:
+                closure_env[self.formal_parameters[i]] = eval(para, env)
+                new_code[1].pop(0)
+                i += 1
+
+            for item in new_code[2]:
+                if item in closure_env:
+                    item = closure_env[item]
+
+            return lispLambdaFuntion(new_code)
+
+        if len_parameters==self.parameter_num:
+            i = 0
+            for para in parameters:
+                env[self.formal_parameters[i]] = eval(para, env)
+                i += 1
+
+            return eval(self.code[2], env)
+
+
+class lispInternalNumberException(Exception):
     pass
 
 
@@ -24,183 +62,143 @@ def to_number(x) -> Union[int, float, complex]:
             try:
                 return complex(x)
             except (ValueError, TypeError):
-                raise InternalException
+                raise lispInternalNumberException
 
 def is_number(x) -> bool:
     try:
         _ = to_number(x)
         return True
-    except InternalException:
+    except lispInternalNumberException:
         return False
 
-def op_add(args:list, env) -> Union[int, float, complex]:
-    ans = 0
-    for ele in args:
-        ans += ele
 
-    return ans
-
-def op_sub(args:list, env) -> Union[int, float, complex]:
-    ans = args[0] - args[1]
-
-    return ans
-
-def op_mul(args:list, env):
-    ans = 1
-    for ele in args:
-        ans *= ele
-
-    return ans
-
-def op_if(exp:Sentence, env):
-    if eval(exp[1], env) == True:
-        return eval(exp[2], env)
+def lisp_op_if(args, env):
+    condition = args[0]
+    true_caluse = args[1]
+    if len(args)>=3:
+        false_caluse = args[2]
     else:
-        return eval(exp[3], env)
+        false_caluse = None
 
-def op_list(args:list, env):
-    return Sentence(args)
+    if eval(condition, env):
+        return eval(true_caluse, env)
+    else:
+        return eval(false_caluse, env)
+
+
+def lisp_op_add(args, env):
+    return reduce(lambda x, y:eval(x, env)+eval(y, env), args)
+
+
+def lisp_op_sub(args, env):
+    return reduce(lambda x, y:eval(x, env)-eval(y, env), args)
+
+
+def lisp_op_mul(args, env):
+    return reduce(lambda x, y:eval(x, env)*eval(y, env), args)
+
+
+def lisp_define(exp:Sentence, env) -> None:
+    name = exp[0]
+    value = exp[1]
+    env[name] = eval(value, env)
+
+
+def lisp_print(args, env):
+    for item in args:
+        print(eval(item, env))
+
 
 TOP_ENV = {
-    '+': op_add,
-    '-': op_sub,
-    '*': op_mul,
-    '/': lambda x, y: x[0] / x[1],
-    'equal?': lambda x, y: x[0] == x[1],
-    'eq?': lambda x, y: x[0] is x[1],
-    '=': lambda x, y: x[0] == x[1],
-    'car': lambda x, y: x[0][0],
-    'cdr': cdr,
-    'cons': lambda x, y: Sentence([x[0], x[1]]),
-    'number?': is_number,
-    'symbol?':lambda x, y: x in y.keys(),
-    'if': op_if,
-    'list': op_list,
+    '+': lisp_op_add,
+    '-': lisp_op_sub,
+    '*': lisp_op_mul,
+    'define': lisp_define,
+    'if': lisp_op_if,
+    '=': lambda x, env: eval(x[0], env) == eval(x[1], env),
+    'print': lisp_print,
+    # 'number?': is_number,
+    # '/': lambda x, y: x[0] / x[1],
+    # 'equal?': lambda x, y: x[0] == x[1],
+    # 'eq?': lambda x, y: x[0] is x[1],
+    # 'car': lambda x, y: x[0][0],
+    # 'cdr': cdr,
+    # 'cons': lambda x, y: Sentence([x[0], x[1]]),
+    # 'symbol?':lambda x, y: x in y.keys(),
+    # 'list': lisp_op_list,
 }
 
-def define(exp:Sentence, env) -> None:
-    name = exp[1]
-    value = exp[2]
-    if isinstance(value, Sentence):
-        if value[0] == 'lambda':
-            env[name] = value
-        else:
-            env[name] = eval(value, env)
-        return
-    if is_number(value):
-        env[name] = to_number(value)
-        return
 
+def lisp_callable(element, env):
+    if isinstance(element, str):
+        try:
+            value = env[element]
+            if isinstance(value, lispLambdaFuntion):
+                return True
 
-def define_syntax(exp:Sentence, env) -> None:
-    name = exp[1]
-    systax_rules = exp[2]
-    len_rules = len(systax_rules) - 2
-    value = {}
-    # ownership
-    for i in range(len_rules):
-        tmp_rule = systax_rules[i+2]
-        args_num = len(tmp_rule[0])-1
-        tmp_args = tmp_rule[0]
-        tmp_args.tokens.pop(0)
-        value[args_num] = Sentence(['lambda', tmp_args, tmp_rule[1]])
-    env[name] = value
+            if callable(value):
+                return True
+        except KeyError:
+            pass
 
+    if isinstance(element, Sentence):
+        if element[0] == 'lambda':
+            return True
 
-def apply_lambda(exp:Sentence, env):
-    if isinstance(exp[0], Sentence) and exp[0][0] == 'lambda':
-        lam_exp = exp[0]
-        pass
-    else:
-        lam_exp = env[exp[0]]
-    formal_parameters = lam_exp[1]
-    lam_body = lam_exp[2]
-    env = copy.deepcopy(env)
-    for i in range(len(formal_parameters)):
-        env[formal_parameters[i]] = eval(exp[i+1], env)
-    return eval(lam_body, env)
+    return False
 
 
 def apply(exp:Sentence, env):
-    func = env[exp[0]]
-    len_args = len(exp) -1
-    args = []
-    for i in range(len_args):
-        args.append(eval(exp[i+1], env))
+    func = eval(exp[0], env)
+    args = exp[1:len(exp)]
+
     return func(args, env)
 
 
-def eval(exp, env=TOP_ENV):
-    tmp = None
+def eval(exp, env):
+    """
+    Sentence.tokens format like "+ 1 2 Sentence 5"
+    """
     if isinstance(exp, Sentence):
-        if len(exp) > 0:
-            tmp = exp[0]
-        else:
-            return None
-        if isinstance(tmp, Sentence):
-            if tmp[0] == 'lambda':
-                return apply_lambda(exp, env)
-            return eval(tmp, env)
+        first_element = exp[0]
+    elif isinstance(exp, str):
+        first_element = exp
+    elif isinstance(exp, lispLambdaFuntion):
+        first_element = exp
     else:
-        tmp = exp
+        print("wrong type")
+        print(type(exp))
+        raise RuntimeError("eval first element type error")
 
-    if env['number?'](tmp):
-        return to_number(tmp)
+    if is_number(first_element):
+        return to_number(first_element)
 
-    if tmp == 'define':
-        define(exp, env)
-        return
+    # this should place before apply function
+    if isinstance(exp, str) and exp in env:
+        return env[first_element]
 
-    if tmp == 'cond':
-        i = 1
-        while eval(exp[i], env) != True:
-            i += 1
-        return eval(exp[i+1], env)
+    if lisp_callable(first_element, env):
+        return apply(exp, env)
 
-    if tmp == 'let':
-        # env = copy.deepcopy(env)
-        # return
-        pass
+    if first_element == 'lambda':
+        return lispLambdaFuntion(exp)
 
-    if tmp == 'if':
-        return op_if(exp, env)
-
-    if tmp == 'begin':
-        result = None
-        for i in range(len(exp)-1):
-            result = eval(exp[i+1])
-        return result
-
-    if tmp[0] == '\'':
-        return tmp[1:]
-
-    if env['symbol?'](tmp, env):
-        # TODO: if tmp is a function then return itself
-        tmp = env[tmp]
-        if isinstance(tmp, Sentence) and tmp[0] == 'lambda':
-            return apply_lambda(exp, env)
-
-        if isinstance(tmp, Dict):
-            args_num = len(tmp)-1
-            return apply_lambda(tmp[args_num], env)
-
-        if hasattr(tmp, '__call__'):
-            return apply(exp, env)
-
-        return tmp
+    return exp
 
 
-def eval_source(source, env=TOP_ENV):
+def eval_source(source, env):
     tokens = tokenize(source)
-    sentences = parse_tokens(tokens)
+    sentences = parse_tokens(tokens)[0]
     result = eval(sentences, env)
     return result
 
+
 if __name__ == '__main__':
-    print("Lisp interpreter Version 0.02")
+    print("Lisp interpreter Version {}".format(Lisp_version))
     env = TOP_ENV
+
     while True:
-        print("> ",end="")
+        print("> ", end="")
         source = input()
         result = eval_source(source, env)
         if result is not None:

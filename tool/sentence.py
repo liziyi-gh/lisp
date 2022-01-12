@@ -6,12 +6,17 @@ class Sentence():
         return self.tokens[idx]
 
     def __str__(self):
-        tmp = '('
-        for i in range(len(self.tokens)):
-            tmp += str(self.tokens[i])
-            if i != len(self.tokens)-1:
+        tmp = ''
+        for item in self.tokens:
+            if item == ')':
+                tmp = tmp.strip() + item
+                return tmp
+
+            tmp += str(item)
+            if tmp != '(':
                 tmp += ' '
-        return tmp + ')'
+
+        return tmp
 
     def __len__(self):
         return len(self.tokens)
