@@ -149,6 +149,9 @@ def lisp_callable(element, env):
 
 
 def apply(exp:Sentence, env):
+    """
+    Non-strict eval
+    """
     func = eval(exp[0], env)
     args = exp[1:len(exp)]
 
