@@ -1,8 +1,11 @@
 import copy
+import logging
 from functools import reduce
 from typing import Union, Any
+
 from tool.sentence import Sentence
 from tool.parser import tokenize, parse_tokens
+from tool import log
 
 
 Lisp_version = 0.03
@@ -22,7 +25,7 @@ class lispLambdaFuntion():
 
         if len_parameters > self.parameter_num:
             # TODO:
-            print("too many args")
+            logging.debug("too many args")
 
         if len_parameters < self.parameter_num:
             closure_env = {}
@@ -104,9 +107,9 @@ def lisp_define(exp:Sentence, env) -> None:
     env[name] = eval(value, env)
 
 
-def lisp_print(args, env):
+def lisp_logging.debug(args, env):
     for item in args:
-        print(eval(item, env))
+        logging.debug(eval(item, env))
 
 
 TOP_ENV = {
@@ -116,7 +119,7 @@ TOP_ENV = {
     'define': lisp_define,
     'if': lisp_op_if,
     '=': lambda x, env: eval(x[0], env) == eval(x[1], env),
-    'print': lisp_print,
+    'logging.debug': lisp_logging.debug,
     # 'number?': is_number,
     # '/': lambda x, y: x[0] / x[1],
     # 'equal?': lambda x, y: x[0] == x[1],
@@ -169,9 +172,12 @@ def eval(exp, env):
     elif isinstance(exp, lispLambdaFuntion):
         first_element = exp
     else:
-        print("wrong type")
-        print(type(exp))
+        logging.debug("wrong type")
+        logging.debug(type(exp))
         raise RuntimeError("eval first element type error")
+
+    if first_element == 'lambda':
+        return lispLambdaFuntion(exp)
 
     if is_number(first_element):
         return to_number(first_element)
@@ -183,26 +189,28 @@ def eval(exp, env):
     if lisp_callable(first_element, env):
         return apply(exp, env)
 
-    if first_element == 'lambda':
-        return lispLambdaFuntion(exp)
-
     return exp
 
 
 def eval_source(source, env):
     tokens = tokenize(source)
+    logging.debug(f"tokens is {tokens}")
     sentences = parse_tokens(tokens)[0]
+    logging.debug(f"sentences is {sentences}")
     result = eval(sentences, env)
+
+    logging.debug(f"result is {result}")
+
     return result
 
-
 if __name__ == '__main__':
-    print("Lisp interpreter Version {}".format(Lisp_version))
+    log.init_logging()
+    logging.debug("Lisp interpreter Version {}".format(Lisp_version))
     env = TOP_ENV
 
     while True:
-        print("> ", end="")
+        logging.debug("> ", end="")
         source = input()
         result = eval_source(source, env)
         if result is not None:
-            print(result)
+            logging.debug(result)

@@ -1,10 +1,16 @@
 import sys
 import copy
 import unittest
+
 sys.path.append("..")
 from interpreter import eval_source, TOP_ENV
+from tool import log
 
 env = copy.deepcopy(TOP_ENV)
+
+def setUpModule():
+    log.init_logging()
+
 
 class TestLambda(unittest.TestCase):
 
@@ -50,6 +56,17 @@ class TestLambda(unittest.TestCase):
         # When
         result = eval_source(source, env)
         expect_result = 123
+
+        # Then
+        self.assertTrue(result == expect_result)
+
+    def test_lambda_5(self):
+        # Given
+        source = "((lambda (x) x+1) 123)"
+
+        # When
+        result = eval_source(source, env)
+        expect_result = 124
 
         # Then
         self.assertTrue(result == expect_result)

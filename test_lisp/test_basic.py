@@ -1,12 +1,15 @@
 import sys
 import copy
 import unittest
+
 sys.path.append("..")
 from interpreter import eval_source, TOP_ENV
+
 env = copy.deepcopy(TOP_ENV)
 
 
 class TestBasic(unittest.TestCase):
+
     def test_basic_add_1_1(self):
         # Given
         source = "(+ 1 1)"
@@ -16,7 +19,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 2
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_basic_add_1_2(self):
         # Given
@@ -27,7 +30,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 12
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_basic_add_2_2(self):
         # Given
@@ -38,7 +41,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 0
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_nest_add_1(self):
         # Given
@@ -49,7 +52,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 11
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_define_add_1(self):
         # Given
@@ -60,7 +63,7 @@ class TestBasic(unittest.TestCase):
         result = eval_source("(+ a 1)", env)
 
         # Then
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_define_add_2(self):
         # Given
@@ -72,8 +75,7 @@ class TestBasic(unittest.TestCase):
         result = eval_source("(+ a b)", env)
 
         # Then
-        assert(result == expect_result)
-
+        assert (result == expect_result)
 
     def test_if_1(self):
         # Given
@@ -84,7 +86,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 1
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     def test_if_2(self):
         # Given
@@ -95,7 +97,7 @@ class TestBasic(unittest.TestCase):
 
         # Then
         expect_result = 0
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     # def test_cond_1(self):
     #     # Given
