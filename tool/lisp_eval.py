@@ -1,6 +1,6 @@
 import logging
 
-from tool.sentence import LispList
+from tool.lisp_list import LispList
 from tool.misc import to_number, is_number
 from tool.lisp_enviroment import LispEnviorment
 from tool.lisp_enviroment import Lisp_is_symbol

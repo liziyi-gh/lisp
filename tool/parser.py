@@ -1,4 +1,4 @@
-from tool.sentence import LispList
+from tool.lisp_list import LispList
 
 
 def find_next_brackets(tokens, begin) -> int:
