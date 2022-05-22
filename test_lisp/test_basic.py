@@ -3,12 +3,12 @@ import unittest
 
 sys.path.append("..")
 from interpreter import eval_source
-from tool.lisp_enviroment import get_top_env
+from tool.lisp_enviroment import LispEnviorment, get_top_env
 from tool import log
 from test_lisp.test_helper import SimpleTestCase
 from test_lisp.test_helper import run_all_simple_tests
 
-env = get_top_env()
+top_env = get_top_env()
 
 
 class TestBasic(unittest.TestCase):
@@ -19,45 +19,57 @@ class TestBasic(unittest.TestCase):
 
     def test_basic_add(self):
         cases = (
-            SimpleTestCase("(+ 1 1)", 2, env),
-            SimpleTestCase("(+ 1 11)", 12, env),
-            SimpleTestCase("(+ -22 22)", 0, env),
-            SimpleTestCase("(+ (+ 1 43) (+ -32 -1))", 11, env),
+            SimpleTestCase("(+ 1 1)", 2, top_env),
+            SimpleTestCase("(+ 1 11)", 12, top_env),
+            SimpleTestCase("(+ -22 22)", 0, top_env),
+            SimpleTestCase("(+ (+ 1 43) (+ -32 -1))", 11, top_env),
         )
 
         run_all_simple_tests(self, cases)
 
     def test_basic_minus(self):
         cases = (
-            SimpleTestCase("(- 1 1)", 0, env),
-            SimpleTestCase("(- 1 11)", -10, env),
-            SimpleTestCase("(- -22 22)", -44, env),
-            SimpleTestCase("(- (- 1 43) (- -32 -1))", -11, env),
+            SimpleTestCase("(- 1 1)", 0, top_env),
+            SimpleTestCase("(- 1 11)", -10, top_env),
+            SimpleTestCase("(- -22 22)", -44, top_env),
+            SimpleTestCase("(- (- 1 43) (- -32 -1))", -11, top_env),
         )
 
         run_all_simple_tests(self, cases)
 
     def test_basic_multiplication(self):
         cases = (
-            SimpleTestCase("(* 1 1)", 1, env),
-            SimpleTestCase("(* 1 0)", 0, env),
-            SimpleTestCase("(* 1 11)", 11, env),
-            SimpleTestCase("(* -22 22)", -484, env),
-            SimpleTestCase("(* (- 1 43) (- -32 -1))", 1302, env),
+            SimpleTestCase("(* 1 1)", 1, top_env),
+            SimpleTestCase("(* 1 0)", 0, top_env),
+            SimpleTestCase("(* 1 11)", 11, top_env),
+            SimpleTestCase("(* -22 22)", -484, top_env),
+            SimpleTestCase("(* (- 1 43) (- -32 -1))", 1302, top_env),
         )
 
         run_all_simple_tests(self, cases)
 
     def test_basic_division(self):
         cases = (
-            SimpleTestCase("(/ 1 1)", 1, env),
-            SimpleTestCase("(/ 1 32)", 1 / 32, env),
-            SimpleTestCase("(/ 1 11)", 1 / 11, env),
-            SimpleTestCase("(/ -22 22)", -1, env),
-            SimpleTestCase("(/ (- 1 43) (- -32 -1))", 42 / 31, env),
+            SimpleTestCase("(/ 1 1)", 1, top_env),
+            SimpleTestCase("(/ 1 32)", 1 / 32, top_env),
+            SimpleTestCase("(/ 1 11)", 1 / 11, top_env),
+            SimpleTestCase("(/ -22 22)", -1, top_env),
+            SimpleTestCase("(/ (- 1 43) (- -32 -1))", 42 / 31, top_env),
         )
 
         run_all_simple_tests(self, cases)
+
+    def test_basic_define(self):
+        # Given
+        env = LispEnviorment({}, top_env)
+        expect_result = 1
+        eval_source(f"(define a {expect_result})", env)
+
+        # When
+        result = eval_source("a", env)
+
+        # Then
+        assert result == expect_result
 
     # def test_define_add_1(self):
     #     # Given
