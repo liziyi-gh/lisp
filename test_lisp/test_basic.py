@@ -59,7 +59,7 @@ class TestBasic(unittest.TestCase):
 
         run_all_simple_tests(self, cases)
 
-    def test_basic_define(self):
+    def test_basic_define_1(self):
         # Given
         env = LispEnviorment({}, top_env)
         expect_result = 1
@@ -71,28 +71,39 @@ class TestBasic(unittest.TestCase):
         # Then
         assert result == expect_result
 
-    # def test_define_add_1(self):
-    #     # Given
-    #     eval_source("(define a 1)", env)
-    #     expect_result = 2
+    def test_basic_define_2(self):
+        # Given
+        env = LispEnviorment({}, top_env)
+        eval_source("(define a 1)", env)
+        expect_result = 2
 
-    #     # When
-    #     result = eval_source("(+ a 1)", env)
+        # When
+        result = eval_source("(+ a 1)", env)
 
-    #     # Then
-    #     assert (result == expect_result)
+        # Then
+        assert (result == expect_result)
 
-    # def test_define_add_2(self):
-    #     # Given
-    #     eval_source("(define a 1)", env)
-    #     eval_source("(define b 1)", env)
-    #     expect_result = 2
+    def test_basic_define_3(self):
+        # Given
+        env = LispEnviorment({}, top_env)
+        eval_source("(define a 1)", env)
+        eval_source("(define b 1)", env)
+        expect_result = 2
 
-    #     # When
-    #     result = eval_source("(+ a b)", env)
+        # When
+        result = eval_source("(+ a b)", env)
 
-    #     # Then
-    #     assert (result == expect_result)
+        # Then
+        assert (result == expect_result)
+
+    def test_cond_1(self):
+        # Given
+        source = "(cond (= 1 0) 2 (= 1 1) (+ 13 -13))"
+        # When
+        result = eval_source(source, top_env)
+        # Then
+        expect_result = 0
+        assert(result == expect_result)
 
     # def test_if_1(self):
     #     # Given
@@ -115,15 +126,6 @@ class TestBasic(unittest.TestCase):
     #     # Then
     #     expect_result = 0
     #     assert (result == expect_result)
-
-    # def test_cond_1(self):
-    #     # Given
-    #     source = "(cond (= 1 0) 2 (= 1 1) (+ 13 -13))"
-    #     # When
-    #     result = eval_source(source, env)
-    #     # Then
-    #     expect_result = 0
-    #     assert(result == expect_result)
 
     # def test_begin_1(self):
     #     # Given
