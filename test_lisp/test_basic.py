@@ -59,6 +59,17 @@ class TestBasic(unittest.TestCase):
 
         run_all_simple_tests(self, cases)
 
+    def test_basic_equal(self):
+        cases = (
+            SimpleTestCase("(= 1 1)", True, top_env),
+            SimpleTestCase("(= 1 32)", False, top_env),
+            SimpleTestCase("(= 1 11)", False, top_env),
+            SimpleTestCase("(= -22 22)", False, top_env),
+            SimpleTestCase("(= (- 1 43) (- 1 43))", True, top_env),
+        )
+
+        run_all_simple_tests(self, cases)
+
     def test_basic_define_1(self):
         # Given
         env = LispEnviorment({}, top_env)

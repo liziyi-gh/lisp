@@ -70,12 +70,19 @@ def Lisp_div(*args):
 
     return ans
 
+def Lisp_equal(*args):
+    lisp_list = args[0]
+    ans = lisp_list[0] == lisp_list[1]
+
+    return ans
+
 
 __primitive_env = {
     '+': Lisp_add,
     '-': Lisp_minus,
     '*': Lisp_multpy,
-    '/': Lisp_div
+    '/': Lisp_div,
+    '=': Lisp_equal,
 }
 
 
