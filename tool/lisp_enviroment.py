@@ -52,10 +52,20 @@ def Lisp_minus(*args):
 
     return ans
 
+def Lisp_multpy(*args):
+    logging.debug(f"args type is {type(args)}")
+    logging.debug(f"args is {args}")
+    lisp_list = args[0]
+    ans = reduce(lambda x, y: x*y, lisp_list.tokens)
+    logging.debug(f"minus result is {ans}")
+
+    return ans
+
 
 __primitive_env = {
     '+': Lisp_add,
     '-': Lisp_minus,
+    '*': Lisp_multpy,
 }
 
 
