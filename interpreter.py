@@ -1,9 +1,5 @@
-import copy
 import logging
-from functools import reduce
-from typing import Dict, Union, Any
 
-from tool.lisp_list import LispList
 from tool.parser import tokenize, parse_tokens
 from tool.lisp_eval import Lisp_eval
 from tool import log
