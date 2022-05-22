@@ -47,8 +47,8 @@ def Lisp_minus(*args):
     logging.debug(f"args type is {type(args)}")
     logging.debug(f"args is {args}")
     lisp_list = args[0]
-    ans = lisp_list[0] - lisp_list[0]
-    logging.debug(f"sum is {ans}")
+    ans = lisp_list[0] - lisp_list[1]
+    logging.debug(f"minus result is {ans}")
 
     return ans
 

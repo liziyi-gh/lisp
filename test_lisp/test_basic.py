@@ -27,16 +27,15 @@ class TestBasic(unittest.TestCase):
 
         run_all_simple_tests(self, cases)
 
-    # def test_basic_minus(self):
-    #     # Given
-    #     source = "(- 1 1)"
+    def test_basic_minus(self):
+        cases = (
+            SimpleTestCase("(- 1 1)", 0, env),
+            SimpleTestCase("(- 1 11)", -10, env),
+            SimpleTestCase("(- -22 22)", -44, env),
+            SimpleTestCase("(- (- 1 43) (- -32 -1))", -11, env),
+        )
 
-    #     # When
-    #     result = eval_source(source, env)
-
-    #     # Then
-    #     expect_result = 0
-    #     assert (result == expect_result)
+        run_all_simple_tests(self, cases)
 
     # def test_define_add_1(self):
     #     # Given
