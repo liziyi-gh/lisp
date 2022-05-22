@@ -19,16 +19,19 @@ class LispLambdaFunction():
 def Lisp_eval_cond(clauses: LispList, env):
     if clauses.tokens == []:
         return LispList([])
+    logging.debug(f"clauses is {clauses}")
 
-    first_clause_result = Lisp_eval(clauses[0][0], env)
+    first_clause_result = Lisp_eval(clauses[0], env)
 
     if first_clause_result == "else":
-        return Lisp_eval(clauses[0][1], env)
+        return Lisp_eval(clauses[1], env)
 
     if first_clause_result == False:
-        Lisp_eval_cond(clauses[1:], env)
+        logging.debug(f"first_clause_result is {first_clause_result}")
+        return Lisp_eval_cond(LispList(clauses[2:]), env)
     else:
-        Lisp_eval(clauses[0][1], env)
+        logging.debug(f"first_clause_result is {first_clause_result}")
+        return Lisp_eval(clauses[1], env)
 
 
 def Lisp_eval_list(l: LispList, env):
@@ -68,7 +71,7 @@ def Lisp_eval(exp, env: LispEnviorment):
         return create_lisp_lambda_func(exp, env)
 
     if exp[0] == "cond":
-        Lisp_eval_cond(exp[1:], env)
+        return Lisp_eval_cond(LispList(exp[1:]), env)
 
     if exp[0] == "define":
         Lisp_define(exp, env)
