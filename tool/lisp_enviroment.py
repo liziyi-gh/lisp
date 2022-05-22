@@ -57,7 +57,16 @@ def Lisp_multpy(*args):
     logging.debug(f"args is {args}")
     lisp_list = args[0]
     ans = reduce(lambda x, y: x*y, lisp_list.tokens)
-    logging.debug(f"minus result is {ans}")
+    logging.debug(f"multpy result is {ans}")
+
+    return ans
+
+def Lisp_div(*args):
+    logging.debug(f"args type is {type(args)}")
+    logging.debug(f"args is {args}")
+    lisp_list = args[0]
+    ans = lisp_list[0] / lisp_list[1]
+    logging.debug(f"div result is {ans}")
 
     return ans
 
@@ -66,6 +75,7 @@ __primitive_env = {
     '+': Lisp_add,
     '-': Lisp_minus,
     '*': Lisp_multpy,
+    '/': Lisp_div
 }
 
 

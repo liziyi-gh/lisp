@@ -48,6 +48,17 @@ class TestBasic(unittest.TestCase):
 
         run_all_simple_tests(self, cases)
 
+    def test_basic_division(self):
+        cases = (
+            SimpleTestCase("(/ 1 1)", 1, env),
+            SimpleTestCase("(/ 1 32)", 1 / 32, env),
+            SimpleTestCase("(/ 1 11)", 1 / 11, env),
+            SimpleTestCase("(/ -22 22)", -1, env),
+            SimpleTestCase("(/ (- 1 43) (- -32 -1))", 42 / 31, env),
+        )
+
+        run_all_simple_tests(self, cases)
+
     # def test_define_add_1(self):
     #     # Given
     #     eval_source("(define a 1)", env)
