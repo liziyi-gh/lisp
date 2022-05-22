@@ -1,4 +1,4 @@
-class Sentence():
+class LispList():
     def __init__(self, t):
         self.tokens = t
 

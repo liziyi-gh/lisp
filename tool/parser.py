@@ -1,4 +1,4 @@
-from tool.sentence import Sentence
+from tool.sentence import LispList
 
 
 def find_next_brackets(tokens, begin) -> int:
@@ -14,12 +14,12 @@ def find_next_brackets(tokens, begin) -> int:
     return -1
 
 
-def parse_tokens(tokens) -> Sentence:
-    root = Sentence([])
+def parse_tokens(tokens) -> LispList:
+    root = LispList([])
     i = 0
     j = 0
     if len(tokens) == 1:
-        return Sentence(tokens)
+        return LispList(tokens)
 
     while (i < len(tokens)):
         if tokens[i] == '(':
