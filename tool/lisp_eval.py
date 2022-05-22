@@ -8,7 +8,6 @@ from tool.lisp_enviroment import Lisp_look_up
 from tool.lisp_enviroment import is_primitive
 
 
-
 class LispLambdaFunction():
 
     def __init__(self, exp, env: LispEnviorment) -> None:
@@ -45,7 +44,7 @@ def Lisp_eval_list(l: LispList, env):
     return LispList(list_tmp)
 
 
-def Lisp_define(exp:LispList, env:LispEnviorment):
+def Lisp_define(exp: LispList, env: LispEnviorment):
     para_name = exp[1]
     para_value = Lisp_eval(exp[2], env)
     env.env[para_name] = para_value
@@ -53,7 +52,8 @@ def Lisp_define(exp:LispList, env:LispEnviorment):
     return
 
 
-def create_lisp_lambda_func(exp:LispList, env: LispEnviorment) -> LispLambdaFunction:
+def create_lisp_lambda_func(exp: LispList,
+                            env: LispEnviorment) -> LispLambdaFunction:
     return LispLambdaFunction(exp, env)
 
 
@@ -78,10 +78,12 @@ def Lisp_eval(exp, env: LispEnviorment):
 
         return
 
-    return Lisp_apply(Lisp_eval(exp[0], env), Lisp_eval_list(LispList(exp[1:]), env))
+    return Lisp_apply(Lisp_eval(exp[0], env),
+                      Lisp_eval_list(LispList(exp[1:]), env))
 
 
-def Lisp_bind(formal_parameters:LispList, args, env:LispEnviorment)->LispEnviorment:
+def Lisp_bind(formal_parameters: LispList, args,
+              env: LispEnviorment) -> LispEnviorment:
     new_env_dict = {}
     for i in range(len(formal_parameters)):
         new_env_dict[formal_parameters[i]] = args[i]
@@ -91,19 +93,20 @@ def Lisp_bind(formal_parameters:LispList, args, env:LispEnviorment)->LispEnviorm
 
 # Should I use object to do this?
 
-def is_lisp_lambda_function(func:LispLambdaFunction)->bool:
+
+def is_lisp_lambda_function(func: LispLambdaFunction) -> bool:
     return isinstance(func, LispLambdaFunction)
 
 
-def get_lambda_func_body(func:LispLambdaFunction)->LispList:
+def get_lambda_func_body(func: LispLambdaFunction) -> LispList:
     return func.exp[2]
 
 
-def get_lambda_func_formal_parameters(func:LispLambdaFunction)->LispList:
+def get_lambda_func_formal_parameters(func: LispLambdaFunction) -> LispList:
     return func.exp[1]
 
 
-def get_lambda_func_env(func:LispLambdaFunction)->LispEnviorment:
+def get_lambda_func_env(func: LispLambdaFunction) -> LispEnviorment:
     return func.env
 
 
