@@ -1,5 +1,8 @@
-* Scheme Interpreter wrote in python
-just type
-#+begin_src Python
-python interpreter.py
+* Scheme Interpreter wrote in pure Python
+Just 4 simple steps to try.
+Make sure you install python3, this program only be tested in python3.10.
+#+begin_src sh
+git clone https://github.com/liziyi-gh/lisp.git
+cd lisp
+python3 interpreter.py
 #+end_src
