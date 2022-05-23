@@ -6,6 +6,7 @@ from tool.lisp_enviroment import LispEnviorment
 from tool.lisp_enviroment import Lisp_is_symbol
 from tool.lisp_enviroment import Lisp_look_up
 from tool.lisp_enviroment import is_primitive
+from tool.log import log_entry_exit
 
 
 class LispLambdaFunction():
@@ -33,6 +34,7 @@ def Lisp_eval_cond(clauses: LispList, env):
         return Lisp_eval(clauses[1], env)
 
 
+@log_entry_exit
 def Lisp_eval_list(l: LispList, env):
     list_tmp = []
     logging.debug(f"l in Lisp_eval_list is {l}")
@@ -57,6 +59,7 @@ def create_lisp_lambda_func(exp: LispList,
     return LispLambdaFunction(exp, env)
 
 
+@log_entry_exit
 def Lisp_eval(exp, env: LispEnviorment):
     if is_number(exp):
         return to_number(exp)

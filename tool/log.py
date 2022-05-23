@@ -12,13 +12,13 @@ def log_entry_exit(func):
     def wrapper(*args, **kwargs):
         func_name = func.__name__
 
-        logging.info(
+        logging.debug(
             f"[Log Helper] enter function {func_name}, args is {args}, kwargs is {kwargs}"
         )
 
         result = func(*args, **kwargs)
 
-        logging.info(f"[Log Helper] exit function {func_name}")
+        logging.debug(f"[Log Helper] exit function {func_name}")
 
         return result
 
