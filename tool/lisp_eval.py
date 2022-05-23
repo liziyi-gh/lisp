@@ -81,6 +81,9 @@ def Lisp_eval(exp, env: LispEnviorment):
 
         return
 
+    if Lisp_is_not_callable(exp[0], env):
+        return exp
+
     return Lisp_apply(Lisp_eval(exp[0], env),
                       Lisp_eval_list(LispList(exp[1:]), env))
 

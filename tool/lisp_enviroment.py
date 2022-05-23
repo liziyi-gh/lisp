@@ -13,7 +13,7 @@ class LispEnviorment():
 
 
 def Lisp_is_symbol(exp, env: LispEnviorment):
-    logging.debug(f"is symbol {exp}")
+    logging.debug(f"is symbol {exp}?")
     logging.debug(f"keys is {env.env.keys()}")
 
     if exp in env.env.keys():
