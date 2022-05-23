@@ -84,9 +84,10 @@ def Lisp_equal(*args):
 
 
 def Lisp_car(*args):
-    lisp_list = args[0]
+    lisp_list = args[0][0]
+    logging.debug(f"lisp_list.tokens is {lisp_list.tokens}")
 
-    return lisp_list[0]
+    return Lisp_eval(lisp_list[0])
 
 
 def Lisp_cdr(*args):

@@ -59,6 +59,19 @@ def create_lisp_lambda_func(exp: LispList,
     return LispLambdaFunction(exp, env)
 
 
+def Lisp_is_callable(exp, env: LispEnviorment) -> bool:
+    if exp[0] == "lambda" or isinstance(exp, LispLambdaFunction):
+        return True
+
+    # TODO: make LispLambdaFunction callable
+    if Lisp_is_symbol(exp, env):
+        tmp = Lisp_look_up(exp, env)
+        if callable(tmp):
+            return True
+
+    return False
+
+
 @log_entry_exit
 def Lisp_eval(exp, env: LispEnviorment):
     if is_number(exp):
@@ -81,11 +94,11 @@ def Lisp_eval(exp, env: LispEnviorment):
 
         return
 
-    if Lisp_is_not_callable(exp[0], env):
-        return exp
+    if Lisp_is_callable(exp[0], env):
+        return Lisp_apply(Lisp_eval(exp[0], env),
+                          Lisp_eval_list(LispList(exp[1:]), env))
 
-    return Lisp_apply(Lisp_eval(exp[0], env),
-                      Lisp_eval_list(LispList(exp[1:]), env))
+    return exp
 
 
 def Lisp_bind(formal_parameters: LispList, args,
@@ -129,4 +142,5 @@ def Lisp_apply(func, args):
         formal_parameters = get_lambda_func_formal_parameters(func)
         logging.debug(f"formal_parameters is {formal_parameters}")
         env = get_lambda_func_env(func)
+
         return Lisp_eval(f, Lisp_bind(formal_parameters, args, env))
