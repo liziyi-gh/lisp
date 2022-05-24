@@ -39,7 +39,7 @@ def Lisp_eval_list(l: LispList, env):
     list_tmp = []
     logging.debug(f"l in Lisp_eval_list is {l}")
 
-    for token in l.tokens:
+    for token in l:
         token_value = Lisp_eval(token, env)
         list_tmp.append(token_value)
 
@@ -96,7 +96,7 @@ def Lisp_eval(exp, env: LispEnviorment):
 
     if Lisp_is_callable(exp[0], env):
         return Lisp_apply(Lisp_eval(exp[0], env),
-                          Lisp_eval_list(LispList(exp[1:]), env))
+                          Lisp_eval_list(exp[1:], env))
 
     return exp
 

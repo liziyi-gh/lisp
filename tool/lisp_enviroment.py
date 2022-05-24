@@ -84,10 +84,10 @@ def Lisp_equal(*args):
 
 
 def Lisp_car(*args):
-    lisp_list = args[0][0]
+    lisp_list = args[0]
     logging.debug(f"lisp_list.tokens is {lisp_list.tokens}")
 
-    return Lisp_eval(lisp_list[0])
+    return lisp_list[0]
 
 
 def Lisp_cdr(*args):
@@ -102,6 +102,7 @@ __primitive_env = {
     '*': Lisp_multpy,
     '/': Lisp_div,
     '=': Lisp_equal,
+    # 'cons': Lisp_cons,
     'car': Lisp_car,
     'cdr': Lisp_cdr,
 }

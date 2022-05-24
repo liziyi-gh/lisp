@@ -62,7 +62,7 @@ class TestBasic(unittest.TestCase):
 
     def test_basic_car(self):
         cases = (
-            SimpleTestCase("(car (1 1))", 1, top_env),
+            # SimpleTestCase("(car (cons 1 1))", 1, top_env),
             # SimpleTestCase("(car ((1 1) (1 32))", LispList([1, 1]), top_env),
             # SimpleTestCase("(/ 1 11)", 1 / 11, top_env),
             # SimpleTestCase("(/ -22 22)", -1, top_env),
