@@ -4,6 +4,7 @@ import unittest
 sys.path.append("..")
 from interpreter import eval_source
 from tool.lisp_enviroment import LispEnviorment, get_top_env
+from tool.lisp_list import LispList
 from tool import log
 from test_lisp.test_helper import SimpleTestCase
 from test_lisp.test_helper import run_all_simple_tests
@@ -55,6 +56,25 @@ class TestBasic(unittest.TestCase):
             SimpleTestCase("(/ 1 11)", 1 / 11, top_env),
             SimpleTestCase("(/ -22 22)", -1, top_env),
             SimpleTestCase("(/ (- 1 43) (- -32 -1))", 42 / 31, top_env),
+        )
+
+        run_all_simple_tests(self, cases)
+
+    def test_basic_car(self):
+        cases = (
+            SimpleTestCase("(car (cons 1 2))", 1, top_env),
+            SimpleTestCase("(car (cons 0 (cons 1 2)))", 0, top_env),
+            SimpleTestCase("(car (cons -1 (cons 0 (cons 1 2))))", -1, top_env),
+        )
+
+        run_all_simple_tests(self, cases)
+
+    def test_basic_cdr(self):
+        cases = (
+            SimpleTestCase("(cdr (cons 1 2))", 2, top_env),
+            SimpleTestCase("(cdr (cons 0 (cons 1 2)))", LispList([1, 2]), top_env),
+            SimpleTestCase("(cdr (cdr (cons 0 (cons 1 2))))", 2, top_env),
+            SimpleTestCase("(cdr (cdr (cdr (cons 0 (cons 1 (cons 2 3))))))", 3, top_env),
         )
 
         run_all_simple_tests(self, cases)
@@ -114,7 +134,7 @@ class TestBasic(unittest.TestCase):
         result = eval_source(source, top_env)
         # Then
         expect_result = 0
-        assert(result == expect_result)
+        assert (result == expect_result)
 
     # def test_if_1(self):
     #     # Given

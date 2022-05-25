@@ -6,6 +6,7 @@ from tool.lisp_enviroment import LispEnviorment
 from tool.lisp_enviroment import Lisp_is_symbol
 from tool.lisp_enviroment import Lisp_look_up
 from tool.lisp_enviroment import is_primitive
+from tool.log import log_entry_exit
 
 
 class LispLambdaFunction():
@@ -33,11 +34,12 @@ def Lisp_eval_cond(clauses: LispList, env):
         return Lisp_eval(clauses[1], env)
 
 
+@log_entry_exit
 def Lisp_eval_list(l: LispList, env):
     list_tmp = []
     logging.debug(f"l in Lisp_eval_list is {l}")
 
-    for token in l.tokens:
+    for token in l:
         token_value = Lisp_eval(token, env)
         list_tmp.append(token_value)
 
@@ -57,6 +59,20 @@ def create_lisp_lambda_func(exp: LispList,
     return LispLambdaFunction(exp, env)
 
 
+def Lisp_is_callable(exp, env: LispEnviorment) -> bool:
+    if exp[0] == "lambda" or isinstance(exp, LispLambdaFunction):
+        return True
+
+    # TODO: make LispLambdaFunction callable
+    if Lisp_is_symbol(exp, env):
+        tmp = Lisp_look_up(exp, env)
+        if callable(tmp):
+            return True
+
+    return False
+
+
+@log_entry_exit
 def Lisp_eval(exp, env: LispEnviorment):
     if is_number(exp):
         return to_number(exp)
@@ -64,8 +80,8 @@ def Lisp_eval(exp, env: LispEnviorment):
     if Lisp_is_symbol(exp, env):
         return Lisp_look_up(exp, env)
 
-    if exp[0] == "QUOTE":
-        return exp[1]
+    # if exp[0] == "QUOTE":
+    #     return exp[1]
 
     if exp[0] == "lambda":
         return create_lisp_lambda_func(exp, env)
@@ -78,8 +94,12 @@ def Lisp_eval(exp, env: LispEnviorment):
 
         return
 
-    return Lisp_apply(Lisp_eval(exp[0], env),
-                      Lisp_eval_list(LispList(exp[1:]), env))
+    if Lisp_is_callable(exp[0], env):
+        logging.debug(f"going to apply {exp[0]}")
+        return Lisp_apply(Lisp_eval(exp[0], env),
+                          Lisp_eval_list(exp[1:], env))
+
+    return exp
 
 
 def Lisp_bind(formal_parameters: LispList, args,
@@ -113,7 +133,6 @@ def get_lambda_func_env(func: LispLambdaFunction) -> LispEnviorment:
 def Lisp_apply(func, args):
     logging.debug("applying")
     if is_primitive(func):
-        logging.debug("is primitive")
         return func(args)
 
     if is_lisp_lambda_function(func):
@@ -123,4 +142,5 @@ def Lisp_apply(func, args):
         formal_parameters = get_lambda_func_formal_parameters(func)
         logging.debug(f"formal_parameters is {formal_parameters}")
         env = get_lambda_func_env(func)
+
         return Lisp_eval(f, Lisp_bind(formal_parameters, args, env))
