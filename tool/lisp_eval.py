@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from tool.lisp_list import LispList
 from tool.misc import to_number, is_number
@@ -14,6 +15,10 @@ class LispLambdaFunction():
     def __init__(self, exp, env: LispEnviorment) -> None:
         self.exp = exp
         self.env = env
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        # make python thought it is callable
+        pass
 
 
 def Lisp_eval_cond(clauses: LispList, env):
