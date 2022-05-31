@@ -26,6 +26,8 @@ class TestLambda(unittest.TestCase):
         cases = (
             SimpleTestCase("((lambda (x) x) 3)", 3, env),
             SimpleTestCase("((lambda (x y) (+ x y)) 1 3)", 4, env),
+            SimpleTestCase("((lambda (x) x) 123)", 123, env),
+            SimpleTestCase("((lambda (x) (+ x 1)) 123)", 124, env),
         )
 
         run_all_simple_tests(self, cases)
@@ -52,60 +54,38 @@ class TestLambda(unittest.TestCase):
         # Then
         assert result == expect_result
 
-    # def test_lambda_4(self):
-    #     # Given
-    #     source = "((lambda (x) x) 123)"
+    def test_recursive_1(self):
+        # Given
+        eval_source("(define accu (lambda (x) (cond (= x 1) 1 else (+ x (accu (- x 1))))))", env)
+        result = eval_source("(accu 2)", env)
 
-    #     # When
-    #     result = eval_source(source, env)
-    #     expect_result = 123
+        # When
+        expect_result = 3
 
-    #     # Then
-    #     self.assertTrue(result == expect_result)
+        # Then
+        self.assertTrue(result == expect_result)
 
-    # def test_lambda_5(self):
-    #     # Given
-    #     source = "((lambda (x) x+1) 123)"
+    def test_lambda_fact_1(self):
+        # Given
+        eval_source("(define fact (lambda (x) (cond (= x 1) 1 else (* x (fact (- x 1))))))", env)
 
-    #     # When
-    #     result = eval_source(source, env)
-    #     expect_result = 124
+        # When
+        expect_result = 1
+        result = eval_source("(fact 1)", env)
 
-    #     # Then
-    #     self.assertTrue(result == expect_result)
+        # Then
+        self.assertTrue(result == expect_result)
 
-    # def test_recursive_1(self):
-    #     # Given
-    #     eval_source("(define accu (lambda (x) (if (= x 1) 1 (+ x (accu (- x 1))))))", env)
-    #     result = eval_source("(accu 2)", env)
+    def test_lambda_fact_2(self):
+        # Given
+        eval_source("(define fact (lambda (x) (cond (= x 1) 1 else (* x (fact (- x 1))))))", env)
 
-    #     # When
-    #     expect_result = 3
+        # When
+        expect_result = 120
+        result = eval_source("(fact 5)", env)
 
-    #     # Then
-    #     self.assertTrue(result == expect_result)
-
-    # def test_lambda_fact_1(self):
-    #     # Given
-    #     eval_source("(define fact (lambda (x) (if (= x 1) 1 (* x (fact (- x 1))))))", env)
-
-    #     # When
-    #     expect_result = 1
-    #     result = eval_source("(fact 1)", env)
-
-    #     # Then
-    #     self.assertTrue(result == expect_result)
-
-    # def test_lambda_fact_2(self):
-    #     # Given
-    #     eval_source("(define fact (lambda (x) (if (= x 1) 1 (* x (fact (- x 1))))))", env)
-
-    #     # When
-    #     expect_result = 120
-    #     result = eval_source("(fact 5)", env)
-
-    #     # Then
-    #     self.assertTrue(result == expect_result)
+        # Then
+        self.assertTrue(result == expect_result)
 
     # def test_y_combinator(self):
     #     # Given
