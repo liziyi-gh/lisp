@@ -87,15 +87,24 @@ class TestLambda(unittest.TestCase):
         # Then
         self.assertTrue(result == expect_result)
 
-    def test_y_combinator(self):
+    def test_y_combinator_1(self):
         # Given
-        # eval_source("(define y-combinator (lambda (f) (lambda (x) (f (x x)) (lambda (x) (f (x x))))))", env)
         eval_source("(define y-combinator (lambda (f)  ((lambda (u) (u u)) (lambda (x) (f (lambda (args) (apply (x x) args)))))))", env)
         eval_source("(define real-fab (y-combinator (lambda (fab) (lambda (n) (cond (= 0 n) 1 else (* n (fab (- n 1))))))))", env)
 
         # When
         result = eval_source("(real-fab 3)", env)
         expect_result = 6
+
+        # Then
+        self.assertTrue(result == expect_result)
+
+    def test_y_combinator_2(self):
+        # Given
+        result = eval_source("(((lambda (f) ((lambda (u) (u u)) (lambda (x) (f (lambda (args) (apply (x x) args)))))) (lambda (fab) (lambda (n) (cond (= 0 n) 1 else (* n (fab (- n 1))))))) 3)", env)
+        expect_result = 6
+
+        # When
 
         # Then
         self.assertTrue(result == expect_result)
