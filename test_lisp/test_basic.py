@@ -136,6 +136,33 @@ class TestBasic(unittest.TestCase):
         expect_result = 0
         assert (result == expect_result)
 
+    def test_cond_2(self):
+        # Given
+        source = "(cond (= 1 0) 2 else (+ 13 -13))"
+        # When
+        result = eval_source(source, top_env)
+        # Then
+        expect_result = 0
+        assert (result == expect_result)
+
+    def test_apply_1(self):
+        # Given
+        source = "(apply (lambda (x) x) 1)"
+        # When
+        result = eval_source(source, top_env)
+        # Then
+        expect_result = 1
+        assert (result == expect_result)
+
+    def test_apply_2(self):
+        # Given
+        source = "(apply (lambda (x) x) 1)"
+        # When
+        result = eval_source(source, top_env)
+        # Then
+        expect_result = 1
+        assert (result == expect_result)
+
     # def test_if_1(self):
     #     # Given
     #     source = "(if (= (if (= 1 2) 1 2) 2) 1)"

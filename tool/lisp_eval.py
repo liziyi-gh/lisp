@@ -26,10 +26,10 @@ def Lisp_eval_cond(clauses: LispList, env):
         return LispList([])
     logging.debug(f"clauses is {clauses}")
 
-    first_clause_result = Lisp_eval(clauses[0], env)
-
-    if first_clause_result == "else":
+    if clauses[0] == "else":
         return Lisp_eval(clauses[1], env)
+
+    first_clause_result = Lisp_eval(clauses[0], env)
 
     if first_clause_result == False:
         logging.debug(f"first_clause_result is {first_clause_result}")
@@ -99,12 +99,12 @@ def Lisp_eval(exp, env: LispEnviorment):
 
         return
 
-    if Lisp_is_callable(exp[0], env):
-        logging.debug(f"going to apply {exp[0]}")
-        return Lisp_apply(Lisp_eval(exp[0], env),
-                          Lisp_eval_list(exp[1:], env))
+    if exp[0] == 'apply':
+        return Lisp_apply(Lisp_eval(exp[1], env),
+                          Lisp_eval_list(exp[2:], env))
 
-    return exp
+    return Lisp_apply(Lisp_eval(exp[0], env),
+                          Lisp_eval_list(exp[1:], env))
 
 
 def Lisp_bind(formal_parameters: LispList, args,
